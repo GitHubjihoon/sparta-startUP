@@ -18,122 +18,130 @@ crossorigin="anonymous"></script>
 
 <style>
 * {
-font-family: 'Gowun Batang', serif;
-color: white;
+    font-family: 'Gowun Batang', serif;
+    color: white;
 }
 
 body {
-background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.aitimes.com/news/photo/202010/132592_129694_3139.jpg');
-background-position: center;
-background-size: cover;
+    background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.aitimes.com/news/photo/202010/132592_129694_3139.jpg');
+    background-position: center;
+    background-size: cover;
 }
 
 h1 {
-font-weight: bold;
+    font-weight: bold;
 }
 
 .order {
-width: 500px;
-margin: 60px auto 0px auto;
-padding-bottom: 60px;
+    width: 500px;
+    margin: 60px auto 0px auto;
+    padding-bottom: 60px;
 }
 
 .mybtn {
-width: 100%;
+    width: 100%;
 }
 
 .order > table {
-margin : 40px 0;
-font-size: 18px;
+    margin: 40px 0;
+    font-size: 18px;
 }
 
 option {
-color: black;
+    color: black;
 }
 </style>
 <script>
-$(document).ready(function () {
-show_order();
+$(document).ready(function () {   //로딩이 완료되자 마자
+    show_order();   //show_order()라는 함수를 불러낸다.
 });
+
 function show_order() {
-$.ajax({
-type: 'GET',
-url: '/mars',
-data: {},
-success: function (response) {
-alert(response['msg'])
+    $.ajax({
+        type: 'GET',
+        url: '/mars',
+        data: {},
+        success: function (response) {
+            let rows = response['oders']   //rows라는 변수에 response딕셔너리의 oders의 값(배열)데이터를 가져온다
+            for (let i = 0; i < rows.length; i++) {   //배열을 0번부터 ~ 끝번호까지 돌면서 본다
+                let name = rows[i]['name']    //name이라는 변수에 rows의 i번째 값중 key가 name인 value를 가져온다
+                let address = rows[i]['address']
+                let size = rows[i]['size']
+
+                let temp_html = `<tr>
+                                    <td>${name}</td>
+                                    <td>${address}</td>
+                                    <td>${size}</td>
+                                </tr>`
+
+                $('#oder-box').append(temp_html)
+
+            }
+        }
+    });
 }
-});
-}
-function save_order() {
-$.ajax({
-type: 'POST',
-url: '/mars',
-data: { sample_give:'데이터전송' },
-success: function (response) {
-alert(response['msg'])
-}
-});
+function save_order() {  //save_oder 라는 함수를 버튼 클릭시 작동하도록 만들어서.
+    // jQuery로 name, adress, size의 데이터를 가져와서
+    let name = $('#name').val()  //변수 name에 #name에 들어온 값을 입력해 줍니다.
+    let address = $('#address').val()
+    let size = $('#size').val()
+
+    //post 형태로 mars에 data를 실어 보냅니다.
+    $.ajax({
+        type: 'POST',
+        url: '/mars',
+        data: { name_give: name, address_give: address, size_give: size},  //서버랑 약속한 이름에서 데이터를 가져와야함.
+        success: function (response) {
+            alert(response['msg'])
+            window.location.reload()  //동작 완료 후 새로고침 하는 코드
+        }
+    });
 }
 </script>
 </head>
 <body>
 <div class="mask"></div>
 <div class="order">
-<h1>화성에 땅 사놓기!</h1>
-<h3>가격: 평 당 500원</h3>
-<p>
-화성에 땅을 사둘 수 있다고?<br/>
-앞으로 백년 간 오지 않을 기회. 화성에서 즐기는 노후!
-</p>
-<div class="order-info">
-<div class="input-group mb-3">
-<span class="input-group-text">이름</span>
-<input id="name" type="text" class="form-control">
-</div>
-<div class="input-group mb-3">
-<span class="input-group-text">주소</span>
-<input id="address" type="text" class="form-control">
-</div>
-<div class="input-group mb-3">
-<label class="input-group-text" for="size">평수</label>
-<select class="form-select" id="size">
-<option selected>-- 주문 평수 --</option>
-<option value="10평">10평</option>
-<option value="20평">20평</option>
-<option value="30평">30평</option>
-<option value="40평">40평</option>
-<option value="50평">50평</option>
-</select>
-</div>
-<button onclick="save_order()" type="button" class="btn btn-warning mybtn">주문하기</button>
-</div>
-<table class="table">
-<thead>
-<tr>
-<th scope="col">이름</th>
-<th scope="col">주소</th>
-<th scope="col">평수</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>홍길동</td>
-<td>서울시 용산구</td>
-<td>20평</td>
-</tr>
-<tr>
-<td>임꺽정</td>
-<td>부산시 동구</td>
-<td>10평</td>
-</tr>
-<tr>
-<td>세종대왕</td>
-<td>세종시 대왕구</td>
-<td>30평</td>
-</tr>
-</tbody>
-</table>
+    <h1>화성에 땅 사놓기!</h1>
+    <h3>가격: 평 당 500원</h3>
+    <p>
+        화성에 땅을 사둘 수 있다고?<br/>
+        앞으로 백년 간 오지 않을 기회. 화성에서 즐기는 노후!
+    </p>
+    <div class="order-info">
+        <div class="input-group mb-3">
+            <span class="input-group-text">이름</span>
+            <input id="name" type="text" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text">주소</span>
+            <input id="address" type="text" class="form-control">
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="size">평수</label>
+            <select class="form-select" id="size">
+                <option selected>-- 주문 평수 --</option>
+                <option value="10평">10평</option>
+                <option value="20평">20평</option>
+                <option value="30평">30평</option>
+                <option value="40평">40평</option>
+                <option value="50평">50평</option>
+            </select>
+        </div>
+        <button onclick="save_order()" type="button" class="btn btn-warning mybtn">주문하기</button>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">이름</th>
+            <th scope="col">주소</th>
+            <th scope="col">평수</th>
+        </tr>
+        </thead>
+        <tbody id="oder-box">
+
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
